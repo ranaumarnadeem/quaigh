@@ -158,6 +158,10 @@ pub struct OptArgs {
     /// Balance And/Xor trees to reduce logic depth (delay-oriented)
     #[arg(long, default_value_t = false)]
     balance: bool,
+
+    /// Lower the network to a 2-input And-Inverter Graph (AIG)
+    #[arg(long, default_value_t = false)]
+    aig: bool,
 }
 
 impl OptArgs {
@@ -176,6 +180,9 @@ impl OptArgs {
         }
         if self.balance {
             aig = optim::balance(&aig);
+        }
+        if self.aig {
+            aig = optim::to_aig(&aig);
         }
         write_network_file(&self.output, &aig);
     }
