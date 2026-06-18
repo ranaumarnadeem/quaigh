@@ -154,6 +154,10 @@ pub struct OptArgs {
     /// Seed for randomized algorithms
     #[arg(long)]
     seed: Option<u64>,
+
+    /// Balance And/Xor trees to reduce logic depth (delay-oriented)
+    #[arg(long, default_value_t = false)]
+    balance: bool,
 }
 
 impl OptArgs {
@@ -170,6 +174,9 @@ impl OptArgs {
             optim::infer_dffe(&mut aig);
             optim::share_logic(&mut aig, 64);
         }
+        if self.balance {
+            aig = optim::balance(&aig);
+        }
         write_network_file(&self.output, &aig);
     }
 }
@@ -183,9 +190,10 @@ pub struct ShowArgs {
 
 impl ShowArgs {
     pub fn run(&self) {
-        use crate::network::stats::stats;
+        use crate::network::stats::{depth, stats};
         let aig = read_network_file(&self.file);
-        println!("Network stats:\n{}\n\n", stats(&aig));
+        println!("Network stats:\n{}", stats(&aig));
+        println!("  Combinational depth: {}\n\n", depth(&aig));
     }
 }
 

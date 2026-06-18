@@ -1,7 +1,9 @@
 //! Optimization of logic networks
 
+mod balance;
 mod infer_gates;
 mod share_logic;
 
+pub use balance::{balance, balance_with};
 pub use infer_gates::{infer_dffe, infer_xor_mux};
 pub use share_logic::share_logic;
